@@ -49,40 +49,45 @@ def t5():
 
 def t6():
 
-    comment_id = "984b90ff-0887-4291-afc4-7854bf452ac8"
-    original_comment = db.get_item("comments",{"comment_id": comment_id})
+    comment_id = "a7f5479c-3d71-44a0-8ec7-d201d2d23ebb"
+    original_comment = db.get_item("comments", {"comment_id": comment_id})
     original_version_id = original_comment["version_id"]
 
     new_comment = copy.deepcopy(original_comment)
 
     try:
-        res = db.write_comment_if_not_changed(original_comment, new_comment)
+        res = db.write_comment_if_not_changed(new_comment, original_version_id)
         print("First write returned: ", res)
     except Exception as e:
         print("First write exception = ", str(e))
 
     try:
-        res = db.write_comment_if_not_changed(original_comment, new_comment)
+        res = db.write_comment_if_not_changed(new_comment, original_version_id)
         print("Second write returned: ", res)
     except Exception as e:
         print("Second write exception = ", str(e))
 
 
 def t7():
-    email = "fy2241@columbia.edu"
-    comment = "This is a test comment!"
+    email = "cz2382@columbia.edu"
+    comment = "Hello!"
     tags = []
     db.add_comment(email, comment, tags)
     res = db.find_by_template("comments", {
-        "email": "fy2241@columbia.edu"
+        "email": email
     })
     print("Result = \n", json.dumps(res, indent=4, default=str))
 
+
+def t8():
+    res = db.do_a_scan("comments")
+    print("Result = \n", json.dumps(res, indent=4, default=str))
 
 # t1()
 # t2()
 # t3()
 # t4()
 # t5()
-# t6()
+t6()
 # t7()
+# t8()

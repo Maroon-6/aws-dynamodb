@@ -103,9 +103,10 @@ def add_response(table_name, comment_id, commenter_email, response):
         "response_id": str(uuid.uuid4()),
         "version_id": str(uuid.uuid4())
     }
-    UpdateExpression="SET responses = list_append(responses, :i)"
+    UpdateExpression="SET responses = list_append(responses, :i), version_id = :j"
     ExpressionAttributeValues={
-        ':i': [full_rsp]
+        ':i': [full_rsp],
+        ':j': full_rsp["version_id"]
     }
     ReturnValues="UPDATED_NEW"
 
@@ -164,12 +165,10 @@ def find_by_tag(tag):
     return result
 
 
-def write_comment_if_not_changed(new_comment, old_comment):
+def write_comment_if_not_changed(new_comment, old_version_id):
 
     new_version_id = str(uuid.uuid4())
     new_comment["version_id"] = new_version_id
-
-    old_version_id = old_comment["version_id"]
 
     table = dynamodb.Table("comments")
 
