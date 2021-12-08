@@ -134,7 +134,7 @@ def find_by_template(table_name, template):
     return result
 
 
-def add_comment(email, comment, tags):
+def add_comment(email, comment, recipe):
     dt = time.time()
     dts = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(dt))
 
@@ -143,7 +143,7 @@ def add_comment(email, comment, tags):
         "version_id": str(uuid.uuid4()),
         "email": email,
         "comment": comment,
-        "tags": tags,
+        "recipe": recipe,
         "datetime": dts,
         "responses": []
     }
@@ -153,16 +153,16 @@ def add_comment(email, comment, tags):
     return res
 
 
-def find_by_tag(tag):
-    table = dynamodb.Table("comments")
-
-    expressionAttributes = dict()
-    expressionAttributes[":tvalue"] = tag
-    filterExpression = "contains(tags, :tvalue)"
-
-    result = table.scan(FilterExpression=filterExpression,
-                        ExpressionAttributeValues=expressionAttributes)
-    return result
+# def find_by_tag(tag):
+#     table = dynamodb.Table("comments")
+#
+#     expressionAttributes = dict()
+#     expressionAttributes[":tvalue"] = tag
+#     filterExpression = "contains(tags, :tvalue)"
+#
+#     result = table.scan(FilterExpression=filterExpression,
+#                         ExpressionAttributeValues=expressionAttributes)
+#     return result
 
 
 def write_comment_if_not_changed(new_comment, old_version_id):

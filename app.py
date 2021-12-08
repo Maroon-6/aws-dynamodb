@@ -4,6 +4,7 @@ from flask import Flask, Response, request, redirect, url_for
 from flask_cors import CORS
 import json
 import logging
+import re
 from datetime import datetime
 from dynamo import dynamodb as db
 
@@ -31,7 +32,7 @@ def comments():
             tmp = {}
             for item in str(qs, "utf-8").split("&"):
                 k, v = item.split("=")
-                tmp[k] = v
+                tmp[k] = re.sub(r"%20", " ", v)
             res = db.find_by_template("comments", tmp)
         rsp = Response(json.dumps(res, default=str), status=200, content_type="application/json")
         return rsp
@@ -39,8 +40,8 @@ def comments():
         data = request.json
         email = data["email"]
         comment = data["comment"]
-        tags = []
-        res = db.add_comment(email, comment, tags)
+        recipe = data["recipe"]
+        res = db.add_comment(email, comment, recipe)
         rsp = Response(json.dumps(res, default=str), status=201, content_type="application/json")
         return rsp
 
@@ -77,4 +78,4 @@ def comment_by_id(comment_id):
 
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port=5000)
+    app.run(host="0.0.0.0", port=5050)
